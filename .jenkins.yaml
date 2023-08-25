@@ -2,7 +2,7 @@
 environment_variables:
   OXIDIZED_VERSION: "0.29.1-1"
 git:
-  branch: main
+  branch: master
 clean_workspace: true
 builders:
   - docker
