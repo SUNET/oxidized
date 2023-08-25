@@ -19,7 +19,9 @@ class JunOS < Oxidized::Model
     cfg
   end
 
-  cmd 'show version' do |cfg|
+  cmd 'show configuration | display omit'
+
+  cmd 'show version detail' do |cfg|
     @model = Regexp.last_match(1) if cfg =~ /^Model: (\S+)/
     comment cfg
   end
@@ -36,14 +38,14 @@ class JunOS < Oxidized::Model
   end
 
   cmd('show chassis hardware') { |cfg| comment cfg }
+  cmd('show system firmware') { |cfg| comment cfg }
   cmd('show system license') do |cfg|
     cfg.gsub!(/  fib-scale\s+(\d+)/, '  fib-scale                       <count>')
     cfg.gsub!(/  rib-scale\s+(\d+)/, '  rib-scale                       <count>')
     comment cfg
   end
   cmd('show system license keys') { |cfg| comment cfg }
-
-  cmd 'show configuration | display omit'
+  cmd('show system boot-messages') { |cfg| comment cfg }
 
   cfg :telnet do
     username(/^login:/)
