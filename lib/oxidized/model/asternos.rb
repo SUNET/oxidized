@@ -14,7 +14,6 @@ class AsterNOS < Oxidized::Model
   end
 
   cmd "show runningconfiguration all"
-  
 
   cfg :ssh do
     # exec true

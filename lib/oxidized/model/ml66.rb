@@ -30,5 +30,4 @@ class ML66 < Oxidized::Model
   cfg :ssh do
     pre_logout 'logout'
   end
-
 end
