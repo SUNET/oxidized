@@ -21,13 +21,15 @@ class Comware < Oxidized::Model
 
   cmd :secret do |cfg|
     cfg.gsub! /^( snmp-agent community).*/, '\\1 <configuration removed>'
-    cfg.gsub! /^( password hash).*/, '\\1 <configuration removed>'
+    cfg.gsub! /(password hash).*/, '\\1 <configuration removed>'
     cfg.gsub! /^( password cipher).*/, '\\1 <configuration removed>'
+    cfg.gsub! /(key (authentication )?cipher) \S+/, '\\1 <configuration removed>'
+    cfg.gsub! /(cipher authentication-mode (md5|sha)).\S+ (privacy-mode (des56|3des|aes\d{0,3})) .\S+/, '\\1 <auth-pass> \\3 <priv-pass>'
     cfg
   end
 
   cfg :telnet do
-    username /^(Username|login):/
+    username /^(Username|[Ll]ogin):/
     password /^Password:/
   end
 
@@ -37,7 +39,7 @@ class Comware < Oxidized::Model
       if vars(:enable) == true
         cmd "super"
       elsif vars(:enable)
-        cmd "super", /^ [pP]assword:/
+        cmd "super", /^\s?[pP]assword:/
         cmd vars(:enable)
       end
     end
