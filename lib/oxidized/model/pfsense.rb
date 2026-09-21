@@ -15,6 +15,7 @@ class PfSense < Oxidized::Model
 
     cfg.gsub! /\s<revision>\s*<time>\d*<\/time>\s*.*\s*.*\s*<\/revision>/, ''
     cfg.gsub! /\s<last_rule_upd_time>\d*<\/last_rule_upd_time>/, ''
+    cfg.gsub! /\s<created>\s*<time>\d*<\/time>\s*.*CDATA\[Auto\].*\s*.*\s*<\/created>/, ''
     cfg
   end
 
@@ -23,6 +24,14 @@ class PfSense < Oxidized::Model
 
   cmd 'cat /etc/version' do |version|
     xmlcomment "PFsense #{version}"
+  end
+
+  metadata :bottom do
+    xmlcomment interpolate_string(
+      vars("metadata_bottom") ||
+      vars("metadata_top") ||
+      Oxidized::Model::METADATA_DEFAULT
+    )
   end
 
   cfg :ssh do

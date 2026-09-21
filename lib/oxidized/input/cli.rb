@@ -20,15 +20,16 @@ module Oxidized
       end
 
       def connect_cli
-        Oxidized.logger.debug "lib/oxidized/input/cli.rb: Running post_login commands at #{node.name}"
+        logger.debug "Running post_login commands at #{node.name}"
         @post_login.each do |command, block|
-          Oxidized.logger.debug "lib/oxidized/input/cli.rb: Running post_login command: #{command.inspect}, block: #{block.inspect} at #{node.name}"
+          logger.debug "Running post_login command: #{command.inspect}, " \
+                       "block: #{block.inspect} at #{node.name}"
           block ? block.call : (cmd command)
         end
       end
 
       def disconnect_cli
-        Oxidized.logger.debug "lib/oxidized/input/cli.rb Running pre_logout commands at #{node.name}"
+        logger.debug "Running pre_logout commands at #{node.name}"
         @pre_logout.each { |command, block| block ? block.call : (cmd command, nil) }
       end
 
@@ -52,15 +53,31 @@ module Oxidized
         @password || (@password = regex)
       end
 
+      def newline(newline_str = "\n")
+        @newline || (@newline = newline_str)
+      end
+
       def login
         match_re = [@node.prompt]
         match_re << @username if @username
         match_re << @password if @password
         until (match = expect(match_re)) == @node.prompt
-          cmd(@node.auth[:username], nil) if match == @username
-          cmd(@node.auth[:password], nil) if match == @password
+          send_credential(:username) if match == @username
+          send_credential(:password) if match == @password
           match_re.delete match
         end
+      end
+
+      private
+
+      def send_credential(type)
+        credential = @node.auth[type]
+        unless credential.is_a?(String)
+          logger.error "Missing #{type} for CLI login at #{@node.name}"
+          raise ArgumentError, "missing #{type} for CLI login"
+        end
+
+        cmd credential, nil
       end
     end
   end
