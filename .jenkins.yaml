@@ -1,6 +1,6 @@
 ---
 environment_variables:
-  OXIDIZED_VERSION: "0.29.1-2"
+  OXIDIZED_VERSION: "0.37.0"
 git:
   branch: master
 clean_workspace: true
